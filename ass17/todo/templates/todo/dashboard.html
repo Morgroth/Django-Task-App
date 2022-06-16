@@ -1,0 +1,35 @@
+<h1>Welcome to dashboard, {{ user.first_name }} {{ user.last_name }}</h1>
+
+<form action="{% url 'todo:add_task' user.email %}">
+    {% csrf_token %}
+    <input type="submit" value="Add task">
+</form>
+
+<form action="{% url 'todo:edit_task' user.email %}" method="get">
+    {% csrf_token %}
+    {% for task in user.task_set.all %}
+    {% if date|date:"SHORT_DATE_FORMAT" == task.task_date|date:"SHORT_DATE_FORMAT" %}
+    <h1>{{ task.task_date|date:"SHORT_DATE_FORMAT" }}</h1>
+    <input type="radio" name="task_id" id="task{{ forloop.counter }}" value="{{ task.id }}">
+    <label for="task{{ forloop.counter }}">{{ task.task_name }}</label>
+    <br>
+    {% endif %}
+    {% endfor %}
+    <br>
+    <input type="submit" value='Edit'>
+</form>
+
+<form action="{% url 'todo:date_handler' user.email %}" method="post">
+    {% csrf_token %}
+{% for date in date_list %}
+<input type="radio" name="date" id="date{{ forloop.counter }}" value='{{ date|date:"SHORT_DATE_FORMAT" }}'>
+<label for="date{{ forloop.counter }}"> Date : {{ date|date:"SHORT_DATE_FORMAT" }}</label>
+<br>
+{% endfor %}
+<input type="submit" name="task_finder" id="task_finder">
+</form>
+
+<form action="{% url 'todo:logout_page' %} " method="post">
+    {% csrf_token %}
+    <input type="submit" name="logout" id="logout" value="LogOut">
+</form>
